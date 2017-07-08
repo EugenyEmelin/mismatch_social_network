@@ -4,4 +4,5 @@
 	define('MM_MAXFILESIZE', 65536); // 64 kb
 	define('MM_MAXIMGWIDTH', 220); 
 	define('MM_MAXIMGHEIGHT', 280);
+	define('VIEW_PROFILE', 'PATTERN_VIEW_PROFILE.php');
 ?>

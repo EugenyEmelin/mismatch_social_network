@@ -22,7 +22,7 @@ function build_query($user_search) {
 			$where_list[] = "`Имя` LIKE '%$word%' OR `Фамилия` LIKE '%$word%' OR `Ник` LIKE '%$word%'"; //
 		}
 	}
-	$where_clause = implode(' OR ', $where_list); //создать строку из массива $where_list вставив между элементами оператор 'OR'
+	$where_clause = implode(' OR ', $where_list); //создать строку из массива $where_list, вставив между элементами оператор 'OR'
 
 	//Добавление условного выражения WHERE к поисковому запросу
 	if (!empty($where_clause)) {
@@ -58,5 +58,6 @@ function generate_page_links($user_search, $cur_page, $num_pages) {
 	}
 	return $page_links;
 }
+
 
 ?>

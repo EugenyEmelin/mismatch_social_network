@@ -1,7 +1,4 @@
 <?php
-	require_once('sessionstart.php');
-	require_once('connect_defines.php');
-
 	 //Выаод заголовка страницы
 	$page_title = 'Там, где противоположности сходятся';
 	require_once('header.php');
@@ -10,64 +7,63 @@
 	//Если пользователь ещё не вошёл в приложение, попытка войти
 	if (!isset($_SESSION['user_id'])) {
 
-		if (isset($_POST['submit'])) {
-			//Соединение с базой данных
-			$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
+		if (isset($_POST['submit'])) { //если пользователь нажал на кнопку входа
+			$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME); //Соединение с базой данных
 			//Получение введеных пользователем данныхх
-			$user_username = mysqli_real_escape_string($dbc, trim($_POST['username']));
-			$user_password = mysqli_real_escape_string($dbc, trim($_POST['password']));
+			$user_username = mysqli_real_escape_string($dbc, trim($_POST['username'])); //обезвредим введённое имя пользователя
+			$user_password = mysqli_real_escape_string($dbc, trim($_POST['password'])); //обезвредим пароль
 
-			if (!empty($user_username) && !empty($user_password)) {
+			if (!empty($user_username) && !empty($user_password)) { //если имя и пароль введены пользователем
 				//Если через форму отправляются непустые значения, поиск имени пользователя и его пароля в БД
 				$query = "SELECT `ID`, `Ник`, `Пароль` FROM `MISMATCH_USER` WHERE `Ник`='$user_username' AND `Пароль`= SHA('$user_password')";
 				$data = mysqli_query($dbc, $query);
 				//Если в таблице БД нашлась запрашиваемая строка...
-				if (mysqli_num_rows($data) == 1) {
+				if (mysqli_num_rows($data) == 1) { //если в результате нашлась 1 строка в БД 
 					//Вход в приложение прошёл успешно, сохранение в куки имени пользователя и его id
-					$row = mysqli_fetch_array($data);
-					$_SESSION['user_id'] = $row['ID'];
-					$_SESSION['username'] = $row['Ник'];
-					setcookie('user_id', $row['ID'], time() + (60*60*24*30));
-					$home_url = 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/PATTERN_VIEW_PROFILE.php' ;
-					header('Location: ' .$home_url);
+					$row = mysqli_fetch_array($data); //добавить данные из найденной строки в массив и присвоить переменной $row
+					$_SESSION['user_id'] = $row['ID']; //записать в текущую сессию id пользователя из массива $row
+					$_SESSION['username'] = $row['Ник'];//записать в текущую сессию ник пользователя из массива $row
+					setcookie('user_id', $row['ID'], time() + (60*60*24*30)); //создать куки для id
+					$home_url = 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/PATTERN_VIEW_PROFILE.php?id='.$_SESSION['user_id'];//url-адрес текущей страницы
+					header('Location: ' .$home_url); //заголовок
 				} else {$error_msg = 'Неверные логин и/или пароль';}
 			} else {$error_msg = 'Введите имя и пароль';}
 			mysqli_close($dbc);
 		}
 
-		if (isset($_POST['submit_sign'])) {
-			$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
+		if (isset($_POST['submit_sign'])) { //если пользователь нажал на кнопку регистрации
+			$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME); //Соединение с базой данных
 			$username = mysqli_real_escape_string($dbc, trim($_POST['username_sign']));
 			$password1 = mysqli_real_escape_string($dbc, trim($_POST['password1_sign']));
 			$password2 = mysqli_real_escape_string($dbc, trim($_POST['password2_sign']));
 
-			if (!empty($username) && !empty($password1) && !empty($password2) && ($password1 == $password2)) {
-  		//Проверка того, что никто из уже зарегестрированных пользователей не пользуется таким же именем, как то, которое ввел новый пользователь
-				$query = "SELECT * FROM `MISMATCH_USER` WHERE `Ник`='$username'";
-				$data = mysqli_query($dbc, $query);
+			if (!empty($username) && !empty($password1) && !empty($password2) && ($password1 == $password2)) { //если все поля не пустые и пароль1 = пароль2
+  				//Проверка того, что никто из уже зарегестрированных пользователей не пользуется таким же именем, как то, которое ввел новый пользователь
+				$query = "SELECT * FROM `MISMATCH_USER` WHERE `Ник`='$username'"; //выбрать всех пользователей из БД с таким ником
+				$data = mysqli_query($dbc, $query); 
 
-				if (mysqli_num_rows($data) == 0) {
-  			//Имя введённое пользователем не используется, поэтому добавляем данные в базу
-					$query = "INSERT INTO `MISMATCH_USER` (`ID`, `Ник`, `Пароль`, `Дата`, `Имя`, `Фамилия`, `Пол`, `День рождения`, `Город`, `Страна`, `Фото`) VALUES (0, '$username', SHA('$password1'), NOW(), '', '', '', NOW(), '', '', '')";
-					mysqli_query($dbc, $query);
+				if (mysqli_num_rows($data) == 0) { //если пользователей с таким ником не нашлось добавляем данные в базу
+					$query_insert = "INSERT INTO `MISMATCH_USER` (`ID`, `Ник`, `Пароль`, `Дата`, `Имя`, `Фамилия`, `Пол`, `День рождения`, `Город`, `Страна`, `Фото`) VALUES (0, '$username', SHA('$password1'), NOW(), '', '', '', NOW(), '', '', '')";
+					mysqli_query($dbc, $query_insert); //добавить данные в таблицу MISMATCH_USER
 
-					$query__ = "SELECT * FROM `MISMATCH_USER` WHERE `Ник`='$username'";
-					$data__ = mysqli_query($dbc, $query__);
-					$row = mysqli_fetch_array($data__);
-					$id_cont	= $row['ID'];
+					$query_select = "SELECT * FROM `MISMATCH_USER` WHERE `Ник`='$username'";
+					$data_select = mysqli_query($dbc, $query_select); //выбран пользователь с ником $username
+					$row = mysqli_fetch_array($data_select); //поместить данные пользователя в массив $row
+					$id_cont = $row['ID']; //присвоить id пользователя переменной $id_cont
 					
-					$query2 = "INSERT INTO `mismatch_user_contacts` (`ID`, `Телефон`, `Телефон-2`, `email`, `Сайт`, `skype`, `vk`) VALUES ('$id_cont', '00000000', '00000000', '', '', '', '') ";
-					mysqli_query($dbc, $query2);
+					$query_insert_2 = "INSERT INTO `mismatch_user_contacts` (`ID`) VALUES ('$id_cont') ";
+					mysqli_query($dbc, $query_insert_2); //добавить в таблицу mismatch_user_contacts id 
 
   			//Вывод подтверждения пользователю
 					mysqli_close($dbc);
   			// exit();
 				} else {
-					echo '<p class="error">Учётная запись с таким именем уже существует. Введите другое имя.</p>';
+					$error_msg = "Пользователь с таким ником уже существует";
 					$username = '';
 				}
-			} else {echo '<p class="error">Вы должны ввести все данные</p>';}
+			} else $error_msg = "Вы должны ввести все данные";
 		}
+
 	}
   // mysqli_close($dbc);
 // var_dump($_SESSION['user_id']);
@@ -87,10 +83,10 @@
 		</div>
 		<!-- FORM -->
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="first_page_form" >
-			<label class="first_page_label" for="username">Ник:</label>
-			<input type="text" name="username" value="<?php if (!empty($user_username)) echo $user_username; ?>"><br>
-			<label class="first_page_label" for="password">Пароль:</label>
-			<input type="password" name="password"><br>
+			<!-- <label class="first_page_label" for="username">Ник:</label> -->
+			<input type="text" name="username" value="<?php if (!empty($user_username)) echo $user_username;  ?>" class="first_page_input" placeholder="Ник"><br>
+			<!-- <label class="first_page_label" for="password">Пароль:</label> -->
+			<input type="password" name="password" class="first_page_input" placeholder="Пароль"><br>
 			<input type="submit" value="Войти" name="submit">	
 		</form>
 
@@ -103,13 +99,17 @@
 
 		<!-- FORM -->
 		<form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="first_page_form">
-			<label class="first_page_label" for="username">Ник: </label>
-			<input type="text" id="username" name="username_sign"><br>
-			<label class="first_page_label" for="password1">Пароль: </label>
-			<input type="password" id="password1" name="password1_sign"><br>
-			<label class="first_page_label" for="password2">Повторите: </label>
-			<input type="password" id="password2" name="password2_sign">
+			<!-- <label class="first_page_label" for="username">Ник: </label> -->
+			<input type="text" id="username" name="username_sign" class="first_page_input" placeholder="Ник"><br>
+			<!-- <label class="first_page_label" for="password1">Пароль: </label> -->
+			<input type="password" id="password1" name="password1_sign" class="first_page_input" placeholder="Пароль"><br>
+			<!-- <label class="first_page_label" for="password2">Повторите: </label> -->
+			<input type="password" id="password2" name="password2_sign" class="first_page_input" placeholder="Повторите пароль"><br>
+
+			<input type="text" id="verify" name="verify" class="first_page_input" placeholder="Введите надпись с картинки"><br>
+			<img src="captcha.php" alt="Проверка идентификационной фразы" class="captcha">
 			<input type="submit" value="Зарегистрироваться" name="submit_sign">
+			<!-- <label for="verify">Проверка:</label> -->
 		</form>
 	</div>
 </div>
