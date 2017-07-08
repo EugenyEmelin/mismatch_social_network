@@ -1,10 +1,4 @@
 <?php
-  require_once('login.php');
-  require_once('sessionstart.php');
-  
-  require_once('defines.php');
-  require_once('connect_defines.php');
-
 //Выаод заголовка страницы
   $page_title = 'Там, где противоположности сходятся';
   require_once('header.php'); 
@@ -13,36 +7,35 @@
   $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
 
   // Grab the profile data from the database
-  if (!isset($_GET['user_id'])) {
-    $query = "SELECT `Ник`, `Дата`, `Имя`, `Фамилия`, `Пол`, `День рождения`, `Город`, `Страна`, `Фото` FROM MISMATCH_USER WHERE ID = '".$_SESSION['user_id']."'";
-  }
-  else {
-    $query = "SELECT `Ник`, `Дата`, `Имя`, `Фамилия`, `Пол`, `День рождения`, `Город`, `Страна`, `Фото` FROM MISMATCH_USER WHERE ID = '" . $_GET['user_id'] . "'";
+  if (!isset($_GET['id'])) {
+    $query = "SELECT * FROM MISMATCH_USER WHERE ID = '" .$_SESSION['id']. "'"; 
+  } else {
+    $query = "SELECT * FROM MISMATCH_USER WHERE ID = '" .$_GET['id']. "'"; 
   }
   $data = mysqli_query($dbc, $query);
 
   if (mysqli_num_rows($data) == 1) {
     // The user row was found so display the user data
     $row = mysqli_fetch_array($data);
+    (is_file(MM_UPLOADPATH . $row['Фото']) && filesize(MM_UPLOADPATH . $row['Фото']) > 0) ? 
+        $photo = MM_UPLOADPATH . $row['Фото'] : 
+        $photo = MM_UPLOADPATH . 'nopic.jpg';
 
  ?>
 
 <body>
 	<main>
 		<div id="column_wrap_1">
-			<div id="avatar_container">
-					
+			<div id="avatar_container">		
 					<div id="avatar_wrape">
-						<img class="avatar" src="<?php echo  MM_UPLOADPATH .$row['Фото']; ?>" alt="">
+						<img class="avatar" src="<?php echo $photo; ?>" alt="">
 					</div>
-					
-	
 			</div>
 
 			<!-- КОНТАКТЫ -->
 			<div id="contacts_wrape">
 				<p class="page_name"><?php echo $row['Имя'].' '.$row['Фамилия']; ?></p>
-				<small>веб-разработчик PHP, JavaScript, node.js, React.js, Angular 2, jQuery</small>
+				<small>веб-разработчик PHP, JavaScript, node.js, React.js, Angular 2, jQuery</small> 
 				<p class="contact_row">
 					<i class="fa fa-map-marker" aria-hidden="true"></i>
 					<?php 
@@ -90,9 +83,7 @@
 			
 		</div>
 		<div id="column_wrap_2">
-			<div id="info_wrap">
 				
-			</div>
 		</div>
 	</main>
 </body>

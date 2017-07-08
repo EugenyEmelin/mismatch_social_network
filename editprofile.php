@@ -1,10 +1,5 @@
+
 <?php   
-require_once('login.php');
-require_once('sessionstart.php');
-
-require_once('defines.php');
-require_once('connect_defines.php');
-
  //Выаод заголовка страницы
 $page_title = 'Там, где противоположности сходятся';
 require_once('header.php');
@@ -14,54 +9,42 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
   // Connect to the database
   $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
 
-  if (isset($_POST['submit'])) {
+//если пользователь нажал на кнопку сохранить (name='submit')
+  if (isset($_POST['submit'])) { 
     // Grab the profile data from the POST
-    $username = mysqli_real_escape_string($dbc, trim($_POST['username']));
+    // $username = mysqli_real_escape_string($dbc, trim($_POST['username']));
     $first_name = mysqli_real_escape_string($dbc, trim($_POST['firstname']));
     $last_name = mysqli_real_escape_string($dbc, trim($_POST['lastname']));
     $gender = mysqli_real_escape_string($dbc, trim($_POST['gender']));
     $birthdate = mysqli_real_escape_string($dbc, trim($_POST['birthdate']));
     $city = mysqli_real_escape_string($dbc, trim($_POST['city']));
-    $state = mysqli_real_escape_string($dbc, trim($_POST['state']));
-    $old_picture = mysqli_real_escape_string($dbc, trim($_POST['old_picture']));
-    $new_picture = mysqli_real_escape_string($dbc, trim($_FILES['new_picture']['name']));
-    $new_picture_type = $_FILES['new_picture']['type'];
-    $new_picture_size = $_FILES['new_picture']['size']; 
-    if (!empty($_FILES['new_picture']['tmp_name'])) list($new_picture_width, $new_picture_height) = getimagesize($_FILES['new_picture']['tmp_name']);
+    $country = mysqli_real_escape_string($dbc, trim($_POST['country']));
+    $old_picture = mysqli_real_escape_string($dbc, trim($_POST['old_picture'])); //текущий аватар профиля
+    $new_picture = mysqli_real_escape_string($dbc, trim($_FILES['new_picture']['name'])); //загружаемый новый аватар
+    $new_picture_type = $_FILES['new_picture']['type']; //расширение загружаемого Фото
+    $new_picture_size = $_FILES['new_picture']['size']; //размер загружаемого изображения
+    if (!empty($_FILES['new_picture']['tmp_name'])) //если файл изображения загружен
+      list($new_picture_width, $new_picture_height) = getimagesize($_FILES['new_picture']['tmp_name']); //присвоить двум переменным значения высоты и ширины фото 
     $error = false;
 
-    // //Контактная информация
-    // $phone = mysqli_real_escape_string($dbc, trim($_POST['phone'])); #телефон
-    // $phone_2 = mysqli_real_escape_string($dbc, trim($_POST['phone_2'])); #телефон 2
-    // $email = mysqli_real_escape_string($dbc, trim($_POST['email'])); #email
-    // $github = mysqli_real_escape_string($dbc, trim($_POST['github']));#gitub
-    // $soсial_networks = mysqli_real_escape_string($dbc, trim($_POST['soсial_networks']));
 
-    // //Профессиональные навыки
-    // $languages = mysqli_real_escape_string($dbc, trim($_POST['languages']));#языки программирования
-    // $web = mysqli_real_escape_string($dbc, trim($_POST['web']));#web-технологии
-    // $frameworks = mysqli_real_escape_string($dbc, trim($_POST['frameworks']));#фреймворки
-    // $exp = mysqli_real_escape_string($dbc, trim($_POST['exp']));#опыт разработки
-
-    //Проекты
+    //_____________________________________________________________________________________________________________________________________picture____
+    if (isset($new_picture)) {
+      $saveto = "$first_name$last_name.jpg";
+      $typeok = true;
 
 
-    // Validate and move the uploaded picture file, if necessary
-    if (!empty($new_picture)) {
       if ((($new_picture_type == 'image/gif') || ($new_picture_type == 'image/jpeg') || ($new_picture_type == 'image/pjpeg') ||
         ($new_picture_type == 'image/png')) && ($new_picture_size > 0) && ($new_picture_size <= MM_MAXFILESIZE) &&
         ($new_picture_width <= MM_MAXIMGWIDTH) && ($new_picture_height <= MM_MAXIMGHEIGHT)) {
+
         if ($_FILES['new_picture']['error'] == 0) {
-          // Move the file to the target upload folder
-          $target = MM_UPLOADPATH . basename($new_picture);
-          if (move_uploaded_file($_FILES['new_picture']['tmp_name'], $target)) {
-            // The new picture file move was successful, now make sure any old picture is deleted
+          $target = MM_UPLOADPATH . basename($new_picture); //наш новый относительный путь файла изображения
+          if (move_uploaded_file($_FILES['new_picture']['tmp_name'], $target)) { //если файл перемещён в новое место успешно...
             if (!empty($old_picture) && ($old_picture != $new_picture)) {
               @unlink(MM_UPLOADPATH . $old_picture); 
             }
-          }
-          else {
-            // The new picture file move failed, so delete the temporary file and set the error flag
+          } else {
             @unlink($_FILES['new_picture']['tmp_name']);
             $error = true;
             echo '<p class="error">Sorry, there was a problem uploading your picture.</p>';
@@ -72,36 +55,78 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
         // The new picture file is not valid, so delete the temporary file and set the error flag
         @unlink($_FILES['new_picture']['tmp_name']);
         $error = true;
-        echo '<p class="error">Your picture must be a GIF, JPEG, or PNG image file no greater than ' . (MM_MAXFILESIZE / 1024) .
-          ' KB and ' . MM_MAXIMGWIDTH . 'x' . MM_MAXIMGHEIGHT . ' pixels in size.</p>';
+        $img_error =  'Фото должно быть в формате jpeg, gif или png, максимальный размер фото ' . (MM_MAXFILESIZE / 1024) .
+          ' KB, разрешение ' . MM_MAXIMGWIDTH . 'x' . MM_MAXIMGHEIGHT;
       }
-    }
+    } //___________________________________________________________________________________________________________________________________picture____
+
+    // if (isset($new_picture)) {
+    //   $typeok = true; //приемлимое расширение загружаемого фото
+    //   $saveto = MM_UPLOADPATH.basename($new_picture); //ссылка на новое фото, которое мы будем генерировать
+
+    //   switch ($new_picture_type) {
+    //     case "image/gif":
+    //       $src = imagecreatefromgif($saveto); //создаём пустое gif изображение  
+    //     break;
+    //     case "image/jpeg": 
+    //       $src = imagecreatefromjpeg($saveto); //создаём пустое jpeg изображение
+    //     break;
+    //     case "image/jpg": 
+    //       $src = imagecreatefromjpeg($saveto); //создаём пустое jpeg изображение
+    //     break;
+    //     case "image/pjpeg": 
+    //       $src = imagecreatefromjpeg($saveto); //создаём пустое jpeg изображение
+    //     break;
+    //     case "image/png":
+    //       $src = imagecreatefrompng($saveto); //создаём пустое png изображение
+    //     break;
+    //     default:
+    //       $typeok = false;
+    //     break;
+    //   }
+
+    //     if ($typeok) {
+    //     list($w, $h) = getimagesize($saveto); //получаем массив размеров нового фото и присваиваваем высоту и ширину переменным
+
+    //     $max = 200;
+    //     $tw = $w;
+    //     $th = $h;
+
+    //     if ($w > $h && $w > $max) { //если ширина больше высоты и больше допустимого значения.. 
+    //       $th = $max/$w*$h;
+    //       $h = $max;
+    //     } else if ($h > $w && $h > $max) { //если высота больше ширины и больше допустимого значения..
+    //       $tw = $max/$h*$w;
+    //       $th = $max;
+    //     } else if ($w > $max) {
+    //       $tw = $th = $max;
+    //     } else if ($w > $h && $w > $max && $h > $max) {
+    //       $tw = $max/$w*$h;
+    //       $th = $max;
+    //     }
+    //     $tmp = imagecreatetruecolor($tw, $th);
+    //     imagecopyresampled($tmp, $src, 0, 0, 0, 0, $tw, $th, $w, $h);
+    //     imageconvolution($tmp, [[–1, –1, –1], [–1, 16, –1], [–1, –1, –1]], 8, 0);
+    //     imagejpeg($tmp, $saveto);
+    //     imagedestroy($tmp);
+    //     imagedestroy($src);
+    //   }
+    // }
+
+
 
     // Update the profile data in the database
     if (!$error) {
-      if (!empty($first_name) && !empty($last_name) && !empty($gender) && !empty($birthdate) && !empty($city) && !empty($state)) {
-        // Only set the picture column if there is a new picture
         if (!empty($new_picture)) {
-          $query = "UPDATE `MISMATCH_USER` SET `Ник` = '$username', `Имя` = '$first_name', `Фамилия` = '$last_name', `Пол` = '$gender', `День рождения` = '$birthdate', `Город` = '$city', `Страна` = '$state',
+          $query = "UPDATE `MISMATCH_USER` SET `Ник` = '".$_SESSION['username']."', `Имя` = '$first_name', `Фамилия` = '$last_name', `Пол` = '$gender', `День рождения` = '$birthdate', `Город` = '$city', `Страна` = '$country',
            `Фото` = '$new_picture' WHERE `ID` = '".$_SESSION['user_id']."'";
         } else {
-          $query = "UPDATE `MISMATCH_USER` SET `Ник` = '$username', `Имя` = '$first_name', `Фамилия` = '$last_name', `Пол` = '$gender',
-           `День рождения` = '$birthdate', `Город` = '$city', `Страна` = '$state' WHERE `ID` = '".$_SESSION['user_id']."'";
+          $query = "UPDATE `MISMATCH_USER` SET `Ник` = '".$_SESSION['username']."', `Имя` = '$first_name', `Фамилия` = '$last_name', `Пол` = '$gender',
+           `День рождения` = '$birthdate', `Город` = '$city', `Страна` = '$country' WHERE `ID` = '".$_SESSION['user_id']."'";
         }
         mysqli_query($dbc, $query);
-
-        // Confirm success with the user
-        
-
-   
-       
-      }
-      else {
-        echo '<p class="error">You must enter all of the profile data (the picture is optional).</p>';
-      }
     }
-  } // End of check for form submission
-
+  }
 
   else {
     // Grab the profile data from the database
@@ -109,42 +134,63 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
     $data = mysqli_query($dbc, $query);
     $row = mysqli_fetch_array($data);
     if ($row != NULL) {
-      $username = $row['Ник'];
+      // $username = $row['Ник'];
       $first_name = $row['Имя'];
       $last_name = $row['Фамилия'];
       $gender = $row['Пол'];
       $birthdate = $row['День рождения'];
       $city = $row['Город'];
-      $state = $row['Страна'];
+      $country = $row['Страна'];
       $old_picture = $row['Фото'];
-    }
-    else {
+    } else {
       echo '<p class="error">There was a problem accessing your profile.</p>';
     }
   }
 
-
-
-  if (isset($_POST['submit_2'])) {
+  if (isset($_POST['submit_2'])) { //если пользователь нажал на кнопку сохранить (name='submit_2')
+    $error_select_from_DB = "";
     $phone = mysqli_real_escape_string($dbc, trim($_POST['phone'])); #телефон
     $phone_2 = mysqli_real_escape_string($dbc, trim($_POST['phone_2'])); #телефон 2
     $email = mysqli_real_escape_string($dbc, trim($_POST['email'])); #email
     $site = mysqli_real_escape_string($dbc, trim($_POST['site'])); #site
     $skype = mysqli_real_escape_string($dbc, trim($_POST['skype'])); #skype
     $vk = mysqli_real_escape_string($dbc, trim($_POST['vk'])); #vk
+    $fb = mysqli_real_escape_string($dbc, trim($_POST['fb'])); #fb
+    $github = mysqli_real_escape_string($dbc, trim($_POST['github'])); #github
+    $twitter = mysqli_real_escape_string($dbc, trim($_POST['twitter'])); #twitter
+    $instagram = mysqli_real_escape_string($dbc, trim($_POST['instagram'])); #instagram
 
-    if (isset($phone) &&  isset($phone_2) && isset($email) && isset($site) && isset($skype) && isset($vk)) {
-      if (!preg_match('/^[1-9]\d{9}$/', $phone) && !preg_match('/^[1-9]\d{9}$/', $phone_2)) {
-        echo '<p class="error">Некорректный номер телефона </p>';
+    // if (!empty($phone) &&  !empty($phone_2) && !empty($email) /*&& !empty($site) && !empty($skype) && !empty($vk)*/) {
+      if (!preg_match('/^[1-9]\d+$/', $phone) && !preg_match('/^[1-9]\d+$/', $phone_2)) {
+        $error_phone = "Некорректный номер телефона"; ##ERROR_PHONE
         $phone = '';
+      } else if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._]*@/', $email)) {
+        $error_email = "Некорректный адрес электронной почты"; ##ERROR_EMAIL
+        $email = '';
       } else {
-      $query = "UPDATE `MISMATCH_USER_contacts` SET `Телефон` = '$phone', `Телефон-2` = '$phone_2', `email` = '$email', `Сайт` = '$site', `skype` = '$skype', `vk` = '$vk', WHERE `ID` = '".$_SESSION['user_id']."'";    
+        $query = "UPDATE `mismatch_user_contacts` SET `Телефон`='$phone', `Телефон-2`='$phone_2', `email`='$email', `Сайт`='$site', `skype`='$skype', `vk`='$vk', `fb`='$fb', `github`='$github', `twitter`='$twitter', `instagram`='$instagram' WHERE `mismatch_user_contacts`.`ID` = '".$_SESSION['user_id']."'";
       }
+      mysqli_query($dbc, $query);
+    // }
+
+  } else { //если массив $_POST пустой, то берём данные из базы данных
+    $query = "SELECT `Телефон`, `Телефон-2`, `email`, `Сайт`, `skype`, `vk`, `fb`, `github`, `twitter`, `instagram` FROM `mismatch_user_contacts` WHERE `ID` = '".$_SESSION['user_id']."'";
+    $data = mysqli_query($dbc, $query); //выбираем из БД пользователя id которого равен id позьзователя текущей сессии ( ID = $_SESSION['user_id'] )
+    $row = mysqli_fetch_array($data); //преобразуем строку из БД в массив и присваиваем переменной $row
+    if ($row != NULL) { //если в массиве $row содержатся данные
+      $phone =  $row['Телефон'];
+      $phone_2 = $row['Телефон-2'];
+      $email = $row['email'];
+      $site = $row['Сайт'];
+      $skype = $row['skype'];
+      $vk =  $row['vk'];
+      $fb = $row['fb'];
+      $github = $row['github'];
+      $twitter = $row['twitter'];
+      $instagram = $row['instagram'];
+    } else {
+      $error_select_from_DB = "Ошибка соединения. Повторите попытку позже.";
     }
-  } else {
-    $query = "";
-    $data = mysqli_query($dbc, $query);
-    $row = mysqli_fetch_array($data);
   }
 
   // mysqli_close($dbc);
@@ -159,8 +205,8 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
  <div id="tabs-1">
   <form enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form">
    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MM_MAXFILESIZE; ?>" />
-   <label for="username">Ник:</label>
-   <input type="text" id="username" name="username" value="<?php if (!empty($username)) echo $username; ?>" /><br />
+   <!-- <label for="username">Ник:</label> -->
+   <!-- <input type="text" id="username" name="username" value="<?php if (!empty($username)) echo $username; ?>" /><br /> -->
    <label for="firstname">Имя:</label>
    <input type="text" id="firstname" name="firstname" value="<?php if (!empty($first_name)) echo $first_name; ?>" /><br />
    <label for="lastname">Фамилия:</label>
@@ -174,38 +220,47 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
    <input type="text" id="birthdate" name="birthdate" value="<?php if (!empty($birthdate)) echo $birthdate; else echo 'YYYY-MM-DD'; ?>" /><br />
    <label for="city">Город:</label>
    <input type="text" id="city" name="city" value="<?php if (!empty($city)) echo $city; ?>" /><br />
-   <label for="state">Страна:</label>
-   <input type="text" id="state" name="state" value="<?php if (!empty($state)) echo $state; ?>" /><br />
+   <label for="country">Страна:</label>
+   <input type="text" id="country" name="country" value="<?php if (!empty($country)) echo $country; ?>" /><br />
    <input type="hidden" name="old_picture" value="<?php if (!empty($old_picture)) echo $old_picture; ?>" />
 
-   <div class="photo">
-    <label for="new_picture" id="photo_label">Выбрать фото</label>
-    <input type="file" id="new_picture" name="new_picture" />
-   </div>
 
    <?php if (!empty($old_picture)) {
     echo '<div class="profile" id="edit_photo_change"><img src="' . MM_UPLOADPATH . $old_picture . '" alt="Profile Picture" /></div>';
    } ?>
+   <div class="photo">
+    <label for="new_picture" id="photo_label">Выбрать фото</label>
+    <input type="file" id="new_picture" name="new_picture" />
+   </div>
    <input type="submit" value="Сохранить" name="submit" />
+   <p class="error"><?php if (isset($img_error)) echo $img_error; ?></p>
   </form>
  </div>
 
  <div id="tabs-2">
    <form enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form">
-   <label for="phone">Моб. телефон:<span class="plus_seven">+7</span></label>
-   <input type="number" id="phone" name="phone" value="<?php if (!empty($phone)) echo $phone; ?>" /><br>
-   <label for="phone_2">Доп. телефон:<span class="plus_seven">+7</span></label>
-   <input type="number" id="phone_2" name="phone_2" value="<?php if (!empty($phone_2)) echo $phone_2; ?>" /><br><br>
-   <label for="email">Email:</label>
-   <input type="text" id="email" name="email" value="<?php if (!empty($email)) echo $email; ?>" /><br>
-   <label for="site">Сайт:</label>
-   <input type="text" id="site" name="site" value="<?php if (!empty($site)) echo $site; ?>" /><br>
-   <label for="Skype">Skype:</label>
-   <input type="text" id="Skype" name="skype" value="<?php if (!empty($skype)) echo $skype; ?>" /><br />
-   <label for="Vk">Vk:</label>
-   <input type="text" id="vk" name="vk" value="<?php if (!empty($vk)) echo $vk; else echo ''; ?>" /><br />
-   <input type="submit" value="Сохранить" name="submit_2" />
-  </form>
+     <label for="phone">Моб. телефон:<span class="plus_seven">+7</span></label>
+     <input type="number" id="phone" name="phone" value="<?php if (!empty($phone)) echo $phone; ?>" /><br>
+     <label for="phone_2">Доп. телефон:<span class="plus_seven">+7</span></label>
+     <input type="number" id="phone_2" name="phone_2" value="<?php if (!empty($phone_2)) echo $phone_2; ?>" /><br><br>
+     <label for="email">Email:</label>
+     <input type="text" id="email" name="email" value="<?php if (!empty($email)) echo $email; ?>" /><br>
+     <label for="site">Сайт:</label>
+     <input type="text" id="site" name="site" value="<?php if (!empty($site)) echo $site; ?>" /><br>
+     <label for="Skype">Skype:</label>
+     <input type="text" id="Skype" name="skype" value="<?php if (!empty($skype)) echo $skype; ?>" /><br><br>
+     <label for="Vk">Вконтакте:</label>
+     <input type="text" id="vk" name="vk" value="<?php if (!empty($vk)) echo $vk; else echo ''; ?>" /><br>
+     <label for="fb">Facebook:</label>
+     <input type="text" id="fb" name="fb" value="<?php if (!empty($fb)) echo $fb; else echo ''; ?>" /><br>
+     <label for="github">github:</label>
+     <input type="text" id="github" name="github" value="<?php if (!empty($github)) echo $github; else echo ''; ?>" /><br>
+     <label for="twitter">twitter:</label>
+     <input type="text" id="twitter" name="twitter" value="<?php if (!empty($twitter)) echo $twitter; else echo ''; ?>" /><br>
+     <label for="instagram">instagram:</label>
+     <input type="text" id="instagram" name="instagram" value="<?php if (!empty($instagram)) echo $instagram; else echo ''; ?>" /><br>
+     <input type="submit" value="Сохранить" name="submit_2" />
+   </form>
  </div>
  <div id="tabs-3"></div>
  <div id="tabs-4"></div>
