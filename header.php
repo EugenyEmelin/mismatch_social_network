@@ -52,6 +52,7 @@ require_once('connect_defines.php');
   </div>
 
   <?php 
+
   if (isset($_SESSION['username'])) {
     $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
     $query = "SELECT Фото, Имя FROM MISMATCH_USER WHERE MISMATCH_USER.ID = '" .$_SESSION['user_id']. "'";
@@ -69,6 +70,7 @@ require_once('connect_defines.php');
       <img src="<?php echo $photo; ?>" alt="">
     </div>
     <i class="fa fa-caret-down user-flex-item" aria-hidden="true"></i>
+
     <div id="profile_menu">
       <a href="<?php echo 'PATTERN_VIEW_PROFILE.php?id='.$_SESSION['user_id'] ?>"><i class="fa fa-home" aria-hidden="true"></i> Моя страница</a>
       <a href="editprofile.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Редактировать</a>
@@ -78,7 +80,5 @@ require_once('connect_defines.php');
   </div>
   <?php } ?>    
   
-
-
   </div>
   </header>

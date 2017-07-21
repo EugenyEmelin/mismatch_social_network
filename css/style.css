@@ -66,6 +66,7 @@ header {
 	box-shadow: none;
 }
 
+
 #user {
 	width: 156px;
 	height: 38px;
@@ -81,6 +82,7 @@ header {
 	background-color: #aac9d6;
 }
  .fa-caret-down {
+
  	padding: 2px 6px 0 0px;
 	position: relative;
 	/*top: 2px;*/
@@ -195,7 +197,10 @@ main {
 	box-shadow:  0 0 10px #dfe3ee;
 }
 #column_wrap_2 {
+
 	/*box-sizing: border-box;*/
+
+	box-sizing: border-box;
 	float: right;
 	width: 676px;
 	height: 1200px;
@@ -348,6 +353,7 @@ a.sign_Login {
   font: .8em/1 Verdana;
   color: #999;
 }
+
 .plus_seven {
 	position: relative;
 	left: 5px
@@ -495,6 +501,7 @@ a.social_links {
 	padding: 0 5px;
 	line-height: 2.3;
 	font:  1em/2 Roboto;
+	font-weight: bold;
 	color: #215f7a;
 }
 .view-profile-links a:hover {

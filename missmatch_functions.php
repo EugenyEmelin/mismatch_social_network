@@ -59,6 +59,7 @@ function generate_page_links($user_search, $cur_page, $num_pages) {
 	return $page_links;
 }
 
+
 // функция обезвреживания вводимых пользователем данных
 function disinfect($var) {
 	global $dbc;
@@ -88,5 +89,6 @@ function sign_up($user, $password) {
 	} else {$error_msg = 'Введите имя и пароль';}
 	mysqli_close($dbc);
 }
+
 
 ?>

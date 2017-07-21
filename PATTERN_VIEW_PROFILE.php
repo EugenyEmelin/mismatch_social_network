@@ -60,7 +60,6 @@
 					<p class="contact_row"></p>
 					<p class="contact_row"></p>
 				</div>
-				
 			</div>
 			<div id="column_wrap_2">
 					

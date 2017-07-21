@@ -11,6 +11,7 @@ require_once('header.php');
   if (isset($_POST['submit'])) { 
     // Grab the profile data from the POST
     // $username = mysqli_real_escape_string($dbc, trim($_POST['username']));
+
     $first_name = disinfect($_POST['firstname']);
     $last_name = disinfect($_POST['lastname']);
     $gender = disinfect($_POST['gender']);
@@ -19,13 +20,24 @@ require_once('header.php');
     $country = disinfect($_POST['country']);
     $old_picture = disinfect($_POST['old_picture']); //текущий аватар профиля
     $new_picture = disinfect($_FILES['new_picture']['name']); //загружаемый новый аватар
+
+    $first_name = mysqli_real_escape_string($dbc, trim($_POST['firstname']));
+    $last_name = mysqli_real_escape_string($dbc, trim($_POST['lastname']));
+    $gender = mysqli_real_escape_string($dbc, trim($_POST['gender']));
+    $birthdate = mysqli_real_escape_string($dbc, trim($_POST['birthdate']));
+    $city = mysqli_real_escape_string($dbc, trim($_POST['city']));
+    $country = mysqli_real_escape_string($dbc, trim($_POST['country']));
+    $old_picture = mysqli_real_escape_string($dbc, trim($_POST['old_picture'])); //текущий аватар профиля
+    $new_picture = mysqli_real_escape_string($dbc, trim($_FILES['new_picture']['name'])); //загружаемый новый аватар
+
     $new_picture_type = $_FILES['new_picture']['type']; //расширение загружаемого Фото
     $new_picture_size = $_FILES['new_picture']['size']; //размер загружаемого изображения
     if (!empty($_FILES['new_picture']['tmp_name'])) //если файл изображения загружен
       list($new_picture_width, $new_picture_height) = getimagesize($_FILES['new_picture']['tmp_name']); //присвоить двум переменным значения высоты и ширины фото 
+
     
     $error = false;
-
+  
     //_____________________________________________________________________________________________________________________________________picture____
     if (!empty($new_picture)) {
       $saveto = "$first_name$last_name.jpg";
@@ -47,7 +59,8 @@ require_once('header.php');
             $img_error = 'Sorry, there was a problem uploading your picture';
           }
         }
-      } else {
+      } 
+      else {
         // The new picture file is not valid, so delete the temporary file and set the error flag
         @unlink($_FILES['new_picture']['tmp_name']);
         $error = true;
@@ -122,6 +135,7 @@ require_once('header.php');
         }
         mysqli_query($dbc, $query);
     }
+
   } else {
     // Grab the profile data from the database
     $query = "SELECT `Ник`, `Имя`, `Фамилия`, `Пол`, `День рождения`, `Город`, `Страна`, `Фото` FROM `MISMATCH_USER` WHERE `ID` = '".$_SESSION['user_id']."'";
@@ -137,12 +151,17 @@ require_once('header.php');
       $country = $row['Страна'];
       $old_picture = $row['Фото'];
     } else {
+
       $img_error = 'There was a problem accessing your profile';
+
+      echo '<p class="error">There was a problem accessing your profile.</p>';
+
     }
   }
 
   if (isset($_POST['submit_2'])) { //если пользователь нажал на кнопку сохранить (name='submit_2')
     $error_select_from_DB = "";
+
     $phone = disinfect($_POST['phone']); #телефон
     $phone_2 = disinfect($_POST['phone_2']); #телефон 2
     $email = disinfect($_POST['email']); #email
@@ -162,11 +181,12 @@ require_once('header.php');
         $error_phone_2 = "Некорректный номер доп. телефона"; ##ERROR_PHONE
         $phone_2 = '';
       } else if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._]*@/', $email) && !empty($email)) {
-        $error_email = "Некорректный адрес электронной почты"; ##ERROR_EMAIL
+        $error_email = "Некорректный email";
         $email = '';
       } else {
         $query = "UPDATE `mismatch_user_contacts` SET `Телефон`='$phone', `Телефон-2`='$phone_2', `email`='$email', `Сайт`='$site', `skype`='$skype', `vk`='$vk', `fb`='$fb', `github`='$github', `twitter`='$twitter', `instagram`='$instagram' WHERE `mismatch_user_contacts`.`ID` = '".$_SESSION['user_id']."'";
       }
+
       mysqli_query($dbc, $query);
     // }
 
@@ -189,6 +209,7 @@ require_once('header.php');
       $error_select_from_DB = "Ошибка соединения. Повторите попытку позже.";
     }
   }
+
 
   // mysqli_close($dbc);
 ?>

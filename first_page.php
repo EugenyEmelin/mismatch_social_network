@@ -53,6 +53,7 @@
 					$id_cont = $row['ID']; //присвоить id пользователя переменной $id_cont		
 					$query_insert_2 = "INSERT INTO `mismatch_user_contacts` (`ID`) VALUES ('$id_cont') ";
 					mysqli_query($dbc, $query_insert_2); //добавить в таблицу mismatch_user_contacts id 
+
 					sign_up($username, $password1);
 				} else {
 					$error_msg = "Пользователь с таким ником уже существует";
