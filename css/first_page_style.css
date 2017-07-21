@@ -71,12 +71,13 @@
 	background-color: rgba(0,0,0,.1);
 }
 .modal_first_wrape {
-	width: 35%;
+	width: 36%;
 	background-color: rgba(239,249,222,.93);
-	box-shadow: 0 0 0 3000px rgba(0,0,0,.7);
+	box-shadow: 0 0 0 3000px rgba(0,0,0,.64);
 	position: absolute;
-	top: 140px;
-	left: 32.5%;
+	top: 100px;
+	left: 32%;
+	left: calc((100%-36%)/3);
 	z-index: 1000;
 	border-radius: 3px;
 }
@@ -140,4 +141,7 @@ img.captcha {
 	display: inline-block;
 	margin-left: 20%;
 	margin-top: 1px; 
+}
+#password1 {
+	margin-top: 30px;
 }

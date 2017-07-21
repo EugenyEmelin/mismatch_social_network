@@ -59,5 +59,34 @@ function generate_page_links($user_search, $cur_page, $num_pages) {
 	return $page_links;
 }
 
+// функция обезвреживания вводимых пользователем данных
+function disinfect($var) {
+	global $dbc;
+	$var = trim($var);
+	$var = strip_tags($var);
+	$var = htmlentities($var);
+	$var = stripslashes($var);
+	return mysqli_real_escape_string($dbc, $var);
+}
+//
+function sign_up($user, $password) {
+	$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME); //Соединение с базой данных
+	if (!empty($user) && !empty($password)) { //если имя и пароль введены пользователем
+		//Если через форму отправляются непустые значения, поиск имени пользователя и его пароля в БД
+		$query = "SELECT `ID`, `Ник`, `Пароль` FROM `MISMATCH_USER` WHERE `Ник`='$user' AND `Пароль`= SHA('$password')";
+		$data = mysqli_query($dbc, $query);
+		//Если в таблице БД нашлась запрашиваемая строка...
+		if (mysqli_num_rows($data) == 1) { //если в результате нашлась 1 строка в БД 
+			//Вход в приложение прошёл успешно, сохранение в куки имени пользователя и его id
+			$row = mysqli_fetch_array($data); //добавить данные из найденной строки в массив и присвоить переменной $row
+			$_SESSION['user_id'] = $row['ID']; //записать в текущую сессию id пользователя из массива $row
+			$_SESSION['username'] = $row['Ник'];//записать в текущую сессию ник пользователя из массива $row
+			setcookie('user_id', $row['ID'], time() + (60*60*24*30)); //создать куки для id
+			$home_url = 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/PATTERN_VIEW_PROFILE.php?id='.$_SESSION['user_id'];//url-адрес текущей страницы
+			header('Location: ' .$home_url); //заголовок
+		} else {$error_msg = 'Неверные логин и/или пароль';}
+	} else {$error_msg = 'Введите имя и пароль';}
+	mysqli_close($dbc);
+}
 
 ?>

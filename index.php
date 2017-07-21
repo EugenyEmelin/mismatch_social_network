@@ -6,7 +6,7 @@
   <main> 
   <aside>
   
-    <?php
+    <?php  
     if (isset($_GET['usersearch'])) {
       $user_search = $_GET['usersearch'];
       $result_search_query = build_query($user_search);

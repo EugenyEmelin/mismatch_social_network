@@ -3,8 +3,6 @@
  //Выаод заголовка страницы
 $page_title = 'Там, где противоположности сходятся';
 require_once('header.php');
-echo 'h3 id="h3_edit">Редактировать профиль</h3>';
-
  
   // Connect to the database
   $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
@@ -13,26 +11,25 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
   if (isset($_POST['submit'])) { 
     // Grab the profile data from the POST
     // $username = mysqli_real_escape_string($dbc, trim($_POST['username']));
-    $first_name = mysqli_real_escape_string($dbc, trim($_POST['firstname']));
-    $last_name = mysqli_real_escape_string($dbc, trim($_POST['lastname']));
-    $gender = mysqli_real_escape_string($dbc, trim($_POST['gender']));
-    $birthdate = mysqli_real_escape_string($dbc, trim($_POST['birthdate']));
-    $city = mysqli_real_escape_string($dbc, trim($_POST['city']));
-    $country = mysqli_real_escape_string($dbc, trim($_POST['country']));
-    $old_picture = mysqli_real_escape_string($dbc, trim($_POST['old_picture'])); //текущий аватар профиля
-    $new_picture = mysqli_real_escape_string($dbc, trim($_FILES['new_picture']['name'])); //загружаемый новый аватар
+    $first_name = disinfect($_POST['firstname']);
+    $last_name = disinfect($_POST['lastname']);
+    $gender = disinfect($_POST['gender']);
+    $birthdate = disinfect($_POST['birthdate']);
+    $city = disinfect($_POST['city']);
+    $country = disinfect($_POST['country']);
+    $old_picture = disinfect($_POST['old_picture']); //текущий аватар профиля
+    $new_picture = disinfect($_FILES['new_picture']['name']); //загружаемый новый аватар
     $new_picture_type = $_FILES['new_picture']['type']; //расширение загружаемого Фото
     $new_picture_size = $_FILES['new_picture']['size']; //размер загружаемого изображения
     if (!empty($_FILES['new_picture']['tmp_name'])) //если файл изображения загружен
       list($new_picture_width, $new_picture_height) = getimagesize($_FILES['new_picture']['tmp_name']); //присвоить двум переменным значения высоты и ширины фото 
+    
     $error = false;
 
-
     //_____________________________________________________________________________________________________________________________________picture____
-    if (isset($new_picture)) {
+    if (!empty($new_picture)) {
       $saveto = "$first_name$last_name.jpg";
       $typeok = true;
-
 
       if ((($new_picture_type == 'image/gif') || ($new_picture_type == 'image/jpeg') || ($new_picture_type == 'image/pjpeg') ||
         ($new_picture_type == 'image/png')) && ($new_picture_size > 0) && ($new_picture_size <= MM_MAXFILESIZE) &&
@@ -47,11 +44,10 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
           } else {
             @unlink($_FILES['new_picture']['tmp_name']);
             $error = true;
-            echo '<p class="error">Sorry, there was a problem uploading your picture.</p>';
+            $img_error = 'Sorry, there was a problem uploading your picture';
           }
         }
-      }
-      else {
+      } else {
         // The new picture file is not valid, so delete the temporary file and set the error flag
         @unlink($_FILES['new_picture']['tmp_name']);
         $error = true;
@@ -126,9 +122,7 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
         }
         mysqli_query($dbc, $query);
     }
-  }
-
-  else {
+  } else {
     // Grab the profile data from the database
     $query = "SELECT `Ник`, `Имя`, `Фамилия`, `Пол`, `День рождения`, `Город`, `Страна`, `Фото` FROM `MISMATCH_USER` WHERE `ID` = '".$_SESSION['user_id']."'";
     $data = mysqli_query($dbc, $query);
@@ -143,28 +137,31 @@ echo 'h3 id="h3_edit">Редактировать профиль</h3>';
       $country = $row['Страна'];
       $old_picture = $row['Фото'];
     } else {
-      echo '<p class="error">There was a problem accessing your profile.</p>';
+      $img_error = 'There was a problem accessing your profile';
     }
   }
 
   if (isset($_POST['submit_2'])) { //если пользователь нажал на кнопку сохранить (name='submit_2')
     $error_select_from_DB = "";
-    $phone = mysqli_real_escape_string($dbc, trim($_POST['phone'])); #телефон
-    $phone_2 = mysqli_real_escape_string($dbc, trim($_POST['phone_2'])); #телефон 2
-    $email = mysqli_real_escape_string($dbc, trim($_POST['email'])); #email
-    $site = mysqli_real_escape_string($dbc, trim($_POST['site'])); #site
-    $skype = mysqli_real_escape_string($dbc, trim($_POST['skype'])); #skype
-    $vk = mysqli_real_escape_string($dbc, trim($_POST['vk'])); #vk
-    $fb = mysqli_real_escape_string($dbc, trim($_POST['fb'])); #fb
-    $github = mysqli_real_escape_string($dbc, trim($_POST['github'])); #github
-    $twitter = mysqli_real_escape_string($dbc, trim($_POST['twitter'])); #twitter
-    $instagram = mysqli_real_escape_string($dbc, trim($_POST['instagram'])); #instagram
+    $phone = disinfect($_POST['phone']); #телефон
+    $phone_2 = disinfect($_POST['phone_2']); #телефон 2
+    $email = disinfect($_POST['email']); #email
+    $site = disinfect($_POST['site']); #site
+    $skype = disinfect($_POST['skype']); #skype
+    $vk = disinfect($_POST['vk']); #vk
+    $fb = disinfect($_POST['fb']); #fb
+    $github = disinfect($_POST['github']); #github
+    $twitter = disinfect($_POST['twitter']); #twitter
+    $instagram = disinfect($_POST['instagram']); #instagram
 
     // if (!empty($phone) &&  !empty($phone_2) && !empty($email) /*&& !empty($site) && !empty($skype) && !empty($vk)*/) {
-      if (!preg_match('/^[1-9]\d+$/', $phone) && !preg_match('/^[1-9]\d+$/', $phone_2)) {
-        $error_phone = "Некорректный номер телефона"; ##ERROR_PHONE
+      if (!preg_match('/^[1-9]\d+$/', $phone) && !empty($phone)) {
+        $error_phone_1 = "Некорректный номер моб. телефона"; ##ERROR_PHONE
         $phone = '';
-      } else if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._]*@/', $email)) {
+      } else if (!preg_match('/^[1-9]\d+$/', $phone_2) && !empty($phone_2)) {
+        $error_phone_2 = "Некорректный номер доп. телефона"; ##ERROR_PHONE
+        $phone_2 = '';
+      } else if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._]*@/', $email) && !empty($email)) {
         $error_email = "Некорректный адрес электронной почты"; ##ERROR_EMAIL
         $email = '';
       } else {

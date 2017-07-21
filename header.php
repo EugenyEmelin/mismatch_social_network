@@ -24,6 +24,7 @@ require_once('connect_defines.php');
     }
   </style>
   <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="css/first_page_style.css" />
   <script src="https://use.fontawesome.com/16dc031fb6.js"></script>
   <script src="js/jquery-3.2.1.min.js"></script>
@@ -51,9 +52,23 @@ require_once('connect_defines.php');
   </div>
 
   <?php 
-  if (isset($_SESSION['username'])) { ?>
-    <div id="user"><?php echo $_SESSION['username'] ?>
-    <i class="fa fa-caret-down" aria-hidden="true"></i></i></a></i>
+  if (isset($_SESSION['username'])) {
+    $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PW, DB_NAME);
+    $query = "SELECT Фото, Имя FROM MISMATCH_USER WHERE MISMATCH_USER.ID = '" .$_SESSION['user_id']. "'";
+    $data = mysqli_query($dbc, $query);
+    if (mysqli_num_rows($data) == 1) {
+      $row = mysqli_fetch_array($data);
+      (is_file(MM_UPLOADPATH . $row['Фото']) && filesize(MM_UPLOADPATH . $row['Фото']) > 0) ?
+      $photo = MM_UPLOADPATH . $row['Фото'] : 
+      $photo = MM_UPLOADPATH . 'nopic.jpg';
+      $name = $row['Имя'];
+    }
+  ?>
+  <div id="user" class="user-flex-item"><?php echo $name; ?>
+    <div class="header-user-avatar user-flex-item">
+      <img src="<?php echo $photo; ?>" alt="">
+    </div>
+    <i class="fa fa-caret-down user-flex-item" aria-hidden="true"></i>
     <div id="profile_menu">
       <a href="<?php echo 'PATTERN_VIEW_PROFILE.php?id='.$_SESSION['user_id'] ?>"><i class="fa fa-home" aria-hidden="true"></i> Моя страница</a>
       <a href="editprofile.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Редактировать</a>
