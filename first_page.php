@@ -108,3 +108,4 @@
 
 	</div>
 </div>
+<script src="js/modal.js"></script>

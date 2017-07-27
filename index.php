@@ -45,16 +45,28 @@
 
       echo 
       "<div class=\"show-user-wrap\">
-      <div class=\"view-profile-avatar-wrape\">      
-        <img src=\"$photo\" alt=\"$fname\">
-      </div>
+        <div class=\"view-profile-avatar-wrape\">      
+          <img src=\"$photo\" alt=\"$fname\">
+        </div>
         <div class=\"view-profile-links\">
           <a href=\"".VIEW_PROFILE."?id=$id\">$fname $lname</a>
-        </div>
-      </div>";
+        </div>";
+        if (isset($_SESSION['username']) && $_SESSION['user_id'] != $id) {
+          ?>
+            <div class="flw-and-subs-links">
+            <form action="" method="POST">
+
+              <button class="add_friend" name="<?php echo $id ?>"><?php echo find_request_to_friend() ? 'Заявка отправлена!' : 'Добавить в друзья'?></button>
+
+              <button class="following" name="<?php echo $id ?>">Подписаться</button>
+
+            </form>
+          </div>
+    <?php
+          }
+      echo "</div>";
     }
     // echo '</table>';
-
     //Если все информация не помещается на одной странице - создание навигационных гиперссылок
     if ($num_pages > 1) {
       echo generate_page_links($user_search, $cur_page, $num_pages); //Используем написанную функцию (см. в _functions.php), которая разбивает результат поиска на несколько страниц (в будущем переделать на подгрузку аяксом!)
@@ -63,10 +75,8 @@
     } else {
       $query = "SELECT * FROM `MISMATCH_USER`";
       echo '<h4>ЛЮДИ</h4>';
-
     }
     echo '</div>';
-
     ?>
   </aside> 
 </main>

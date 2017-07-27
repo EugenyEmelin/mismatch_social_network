@@ -22,6 +22,30 @@ require_once('connect_defines.php');
       font-family: 'SegoeUIRegular';
       src:url(fonts/SegoeUIRegular.ttf);
     }
+    @font-face {
+      font-family: 'LatoLight';
+      src:url(fonts/LatoLight.eot);
+    } 
+    @font-face {
+      font-family: 'LatoLight';
+      src:url(fonts/LatoLight.ttf);
+    }    
+    @font-face {
+      font-family: 'LatoLight';
+      src:url(fonts/LatoLight.woff);
+    }
+    @font-face {
+      font-family: 'LatoRegular';
+      src:url(fonts/LatoRegular.eot);
+    }
+    @font-face {
+      font-family: 'LatoRegular';
+      src:url(fonts/LatoRegular.ttf);
+    }
+    @font-face {
+      font-family: 'LatoRegular';
+      src:url(fonts/LatoRegular.woff);
+    }
   </style>
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -29,7 +53,7 @@ require_once('connect_defines.php');
   <script src="https://use.fontawesome.com/16dc031fb6.js"></script>
   <script src="js/jquery-3.2.1.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script src="js/modal.js"></script>
+  <script src="js/js.js"></script>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script>
     $(function() {

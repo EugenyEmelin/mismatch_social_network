@@ -21,20 +21,19 @@ require_once('header.php');
     $old_picture = disinfect($_POST['old_picture']); //текущий аватар профиля
     $new_picture = disinfect($_FILES['new_picture']['name']); //загружаемый новый аватар
 
-    $first_name = mysqli_real_escape_string($dbc, trim($_POST['firstname']));
-    $last_name = mysqli_real_escape_string($dbc, trim($_POST['lastname']));
-    $gender = mysqli_real_escape_string($dbc, trim($_POST['gender']));
-    $birthdate = mysqli_real_escape_string($dbc, trim($_POST['birthdate']));
-    $city = mysqli_real_escape_string($dbc, trim($_POST['city']));
-    $country = mysqli_real_escape_string($dbc, trim($_POST['country']));
-    $old_picture = mysqli_real_escape_string($dbc, trim($_POST['old_picture'])); //текущий аватар профиля
-    $new_picture = mysqli_real_escape_string($dbc, trim($_FILES['new_picture']['name'])); //загружаемый новый аватар
+    // $first_name = mysqli_real_escape_string($dbc, trim($_POST['firstname']));
+    // $last_name = mysqli_real_escape_string($dbc, trim($_POST['lastname']));
+    // $gender = mysqli_real_escape_string($dbc, trim($_POST['gender']));
+    // $birthdate = mysqli_real_escape_string($dbc, trim($_POST['birthdate']));
+    // $city = mysqli_real_escape_string($dbc, trim($_POST['city']));
+    // $country = mysqli_real_escape_string($dbc, trim($_POST['country']));
+    // $old_picture = mysqli_real_escape_string($dbc, trim($_POST['old_picture'])); //текущий аватар профиля
+    // $new_picture = mysqli_real_escape_string($dbc, trim($_FILES['new_picture']['name'])); //загружаемый новый аватар
 
     $new_picture_type = $_FILES['new_picture']['type']; //расширение загружаемого Фото
     $new_picture_size = $_FILES['new_picture']['size']; //размер загружаемого изображения
     if (!empty($_FILES['new_picture']['tmp_name'])) //если файл изображения загружен
-      list($new_picture_width, $new_picture_height) = getimagesize($_FILES['new_picture']['tmp_name']); //присвоить двум переменным значения высоты и ширины фото 
-
+      list($new_picture_width, $new_picture_height) = getimagesize($_FILES['new_picture']['tmp_name']); //присвоить двум переменным значения высоты и ширины фото
     
     $error = false;
   

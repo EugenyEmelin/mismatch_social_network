@@ -2,7 +2,6 @@
 
 function build_query($user_search) {
 	$search_query = "SELECT * FROM MISMATCH_USER";
-
 	//Извлечение критериев поиска в массив
 	$clean_search = str_replace(',', ' ', $user_search); //заменяем запятые на пробелы
 	$search_words = explode(' ', $clean_search); //создадим массив из поисковых слов, разделённых пробелами
@@ -14,7 +13,6 @@ function build_query($user_search) {
 			}
 		}
 	}
-
 	//Создание условного выражения WHERE с использованием всех критериев поиска
 	$where_list = array();
 	if (count($final_search_words) > 0) {
@@ -22,16 +20,13 @@ function build_query($user_search) {
 			$where_list[] = "`Имя` LIKE '%$word%' OR `Фамилия` LIKE '%$word%' OR `Ник` LIKE '%$word%'"; //
 		}
 	}
-	$where_clause = implode(' OR ', $where_list); //создать строку из массива $where_list, вставив между элементами оператор 'OR'
-
+	$where_clause = implode(' OR ', $where_list); //создать строку из массива $where_list, вставив между элементами оператор'OR'
 	//Добавление условного выражения WHERE к поисковому запросу
 	if (!empty($where_clause)) {
 		$search_query .= " WHERE $where_clause"; 
 	}
-
 	return $search_query;
 }
-
 
 function generate_page_links($user_search, $cur_page, $num_pages) {
 	$page_links = '';
@@ -40,7 +35,6 @@ function generate_page_links($user_search, $cur_page, $num_pages) {
 	} else {
 		$page_links .= '<-';
 	}
-
 	//Прохождение в цикле всех страниц и создание гиперссылок, указывающих на конкретные страницы
 	for ($i=1; $i <= $num_pages; $i++) {
 		if ($cur_page == $i) {
@@ -49,7 +43,6 @@ function generate_page_links($user_search, $cur_page, $num_pages) {
 			$page_links .= ' <a href="' .$_SERVER['PHP_SELF']. '?usersearch=' .$user_search. '&page=' .$i. '">' .$i. '</a>'; 
 		}
 	}
-
 	//Если это не последняя страница - создание гиперссылки "следующая страница" (>>)
 	if ($cur_page < $num_pages) {
 		$page_links .= ' <a href="' .$_SERVER['PHP_SELF']. '?usersearch=' .$user_search. '&page=' .($cur_page + 1). '">-></a>';
@@ -58,8 +51,6 @@ function generate_page_links($user_search, $cur_page, $num_pages) {
 	}
 	return $page_links;
 }
-
-
 // функция обезвреживания вводимых пользователем данных
 function disinfect($var) {
 	global $dbc;
@@ -88,6 +79,31 @@ function sign_up($user, $password) {
 		} else {$error_msg = 'Неверные логин и/или пароль';}
 	} else {$error_msg = 'Введите имя и пароль';}
 	mysqli_close($dbc);
+}
+//Функция поиска запроса в друзья
+function find_request_to_friend() {
+	global $dbc, $id;
+	$find_request_to_friend;
+	$my_id = $_SESSION['user_id'];
+	$query = "SELECT `user_from_id`, `user_to_id` FROM `mismatch_friends_request` WHERE (`user_from_id` = $my_id AND `user_to_id` = $id) OR (`user_from_id` = $id AND `user_to_id` = $my_id)";
+	$data = mysqli_query($dbc, $query);
+	if (mysqli_num_rows($data) == 0) {
+		$find_request_to_friend = false;
+	} else {
+		$find_request_to_friend = true;
+	}
+	return $find_request_to_friend;
+
+}
+
+//
+function find_friend() {
+
+}
+
+//
+function find_sub() {
+
 }
 
 

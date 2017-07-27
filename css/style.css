@@ -2,11 +2,13 @@
 body {
 	margin: 0; 
 	padding: 0; 
-	font: 1em/1.2 'Proxima Nova Thin';
+	/*font: 1em/1.2 'Proxima Nova Thin';*/
+	font: .98em/1.1 LatoRegular;
 	color: #888;
 	box-sizing: border-box;
 	background-color: #eff9de;
 }
+a {text-decoration: none}
 html.fa-events-icons-ready {
 	height: 640px;
 }
@@ -38,7 +40,7 @@ header {
 }
 #search-div {
 	display: inline-block;
-	margin-right: 187px;
+	margin-right: 185px;
 }
 #search-input {
 	width: 260px;
@@ -52,7 +54,7 @@ header {
 }
 #search-input::-webkit-input-placeholder {
 	color: #fff;
-	letter-spacing: 1px;
+	letter-spacing: 2px;
 }
 #search-input::-moz-placeholder {
 	color: #fff;
@@ -76,7 +78,7 @@ header {
 	cursor: pointer;
 	letter-spacing: -.5px;
 	word-spacing: -1px;
-	font: .89em SegoeUIRegular;
+	font: .9em/1.2 SegoeUIRegular;
 }
 #user:hover {
 	background-color: #aac9d6;
@@ -191,7 +193,7 @@ main {
 #column_wrap_1 {
 	float: left;
 	width: 280px;
-	/*min-height: 1200px;*/
+	min-height: 600px;
 	background-color: #fff;
 	border-radius: 3px;
 	box-shadow:  0 0 10px #dfe3ee;
@@ -496,16 +498,20 @@ a.social_links {
 	color: #999999;
 	font-size: .8em;
 }
+.view-profile-links {
+	width: 50%;
+	margin: 0;
+	display: inline-block;
+}
 .view-profile-links a{
 	text-decoration: none;
 	padding: 0 5px;
-	line-height: 2.3;
-	font:  1em/2 Roboto;
-	font-weight: bold;
+	font:  .95em/2.5 LatoRegular;
 	color: #215f7a;
 }
 .view-profile-links a:hover {
-	text-decoration: underline;
+	/*text-decoration: underline;*/
+	color: #000;
 }
 .view-profile-avatar-wrape {
 	width: 88px;
@@ -535,4 +541,32 @@ a.social_links {
 .user-flex-item {
 	justify-content: flex-end;
 	align-items: center;
+}
+.flw-and-subs-links {
+ float: right;
+}
+.add_friend, .following {
+	width: 144px;
+	display: block;
+	padding: 8px 17px 7px 17px;
+	letter-spacing: 0px;
+	border-radius: 1px;
+	font: .79em/1.2 LatoLight;
+	margin: 6px 0;
+	text-align: center;
+	border: none;
+	background-color: #99B9C7;
+	color: #fff;
+	outline: none;
+	cursor: pointer;
+	transition: .2s
+}
+.following {
+	background-color: #b0df8a;
+}
+.add_friend:hover {
+	background-color: #aac9d6;
+}
+.following:hover {
+	background-color: #b2d67b;
 }
