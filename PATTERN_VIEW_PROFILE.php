@@ -29,30 +29,30 @@
 					</p>
 						<?php 
 						if (!empty($reg_date)) {
-							echo "<p class=\"contact_row\"><i class=\"fa fa-calendar-check-o\" aria-hidden=\"true\"></i> Дата регистрации: $reg_date</p>";
+							echo "<p class=\"contact_row\"><i class=\"fa fa-calendar-check-o\" aria-hidden=\"true\"></i>Дата регистрации: $reg_date</p>";
 						}
 							
 						?>
 					<p class="contact_row">
 						<?php 
-						if (!empty($email)) echo '<i class="fa fa-envelope" aria-hidden="true"></i> '.$email;
+						if (!empty($email)) echo '<i class="fa fa-envelope" aria-hidden="true"></i>'.$email;
 						?>
 					</p>
 	
 					<br>
 					<div class="contact_row">
 						<?php  
-							if ((!empty($vk))) echo "<i class=\"fa fa-vk\" aria-hidden=\"true\"></i> <a target=\"_blank\" class=\"social_links\" href=\"$vk\">$vk</a>";
+							if ((!empty($vk))) echo "<i class=\"fa fa-vk\" aria-hidden=\"true\"></i><a target=\"_blank\" class=\"social_links\" href=\"$vk\">$vk</a>";
 						?>
 					</div>
 					<div class="contact_row">
 						<?php  
-							if ((!empty($github))) echo "<i class=\"fa fa-github\" aria-hidden=\"true\"></i> <a target=\"_blank\" class=\"social_links\" href=\"$github\">$github</a>";
+							if ((!empty($github))) echo "<i class=\"fa fa-github\" aria-hidden=\"true\"></i><a target=\"_blank\" class=\"social_links\" href=\"$github\">$github</a>";
 						?>
 					</div>
 					<div class="contact_row">
 						<?php  
-							if ((!empty($fb))) echo "<i class=\"fa fa-facebook\" aria-hidden=\"true\"></i> <a target=\"_blank\" class=\"social_links\" href=\"$fb\">$fb</a>";
+							if ((!empty($fb))) echo "<i class=\"fa fa-facebook\" aria-hidden=\"true\"></i><a target=\"_blank\" class=\"social_links\" href=\"$fb\">$fb</a>";
 						?>
 					</div>
 					<p class="contact_row"></p>

@@ -163,7 +163,7 @@ header {
 }
 .fa-map-marker {
 	font-size: 1.25em !important;
-	padding: 0 4px 0 1px;
+	/*padding: 0 4px 0 1px;*/
 }
 .fa-vk {
 	color: #507299;
@@ -236,6 +236,9 @@ main {
 	margin: .3em 0;
 	color: #666;
 	/*border-bottom: 1px solid #c9c9c9;*/
+}
+.fa {
+	width: 19px;
 }
 small {
 	display: block;
@@ -479,12 +482,12 @@ a.social_links {
 	background-color: #fff;
 	height: 80px;
 	padding: 20px 20px;
-	border-top: 1px solid #e7e8ec;
+	border-bottom: 1px solid #e7e8ec;
 }
-.show-user-wrap:first-child {
+/*.show-user-wrap:first-child {
 	background-color: #000;
 	border-top: none;
-}
+}*/
 .user-list-title {
 	padding: 0 20px;
 	height: 50px;
@@ -546,12 +549,12 @@ a.social_links {
  float: right;
 }
 .add_friend, .following {
-	width: 144px;
+	width: 152px;
 	display: block;
-	padding: 8px 17px 7px 17px;
+	padding: 9px 17px 7px 17px;
 	letter-spacing: 0px;
 	border-radius: 1px;
-	font: .79em/1.2 LatoLight;
+	font: .83em/1 LatoLight;
 	margin: 6px 0;
 	text-align: center;
 	border: none;

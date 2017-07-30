@@ -81,8 +81,8 @@ function sign_up($user, $password) {
 	mysqli_close($dbc);
 }
 //Функция поиска запроса в друзья
-function find_request_to_friend() {
-	global $dbc, $id;
+function find_request_to_friend($id) {
+	global $dbc;
 	$find_request_to_friend;
 	$my_id = $_SESSION['user_id'];
 	$query = "SELECT `user_from_id`, `user_to_id` FROM `mismatch_friends_request` WHERE (`user_from_id` = $my_id AND `user_to_id` = $id) OR (`user_from_id` = $id AND `user_to_id` = $my_id)";
@@ -93,7 +93,6 @@ function find_request_to_friend() {
 		$find_request_to_friend = true;
 	}
 	return $find_request_to_friend;
-
 }
 
 //
@@ -103,7 +102,17 @@ function find_friend() {
 
 //
 function find_sub() {
-
+	global $dbc, $id;
+	$find_sub;
+	$my_id = $_SESSION['user_id'];
+	$query = "SELECT `subscriber`, `followed` FROM `mismatch_subscribers` WHERE `subscriber` = $my_id AND `followed` = $id";
+	$data = mysqli_query($dbc, $query);
+	if (mysqli_num_rows($data) == 0) {
+		$find_sub = false;
+	} else {
+		$find_sub = true;
+	}
+	return $find_sub;
 }
 
 
