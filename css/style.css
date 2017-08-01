@@ -573,3 +573,9 @@ a.social_links {
 .following:hover {
 	background-color: #b2d67b;
 }
+.request-has-been-sent:hover::after {
+	content: 'Отменить заявку';
+	background-color: #000;
+	width: 152px;
+	height: 55px;
+}

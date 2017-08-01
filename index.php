@@ -55,11 +55,13 @@
           ?>
             <div class="flw-and-subs-links">
             <form action="" method="POST">
-
-              <button class="add_friend" name="<?php echo $id ?>"><?php echo find_request_to_friend($id) ? 'Заявка отправлена' : 'Добавить в друзья'?></button>
+              <?php echo find_request_to_friend($id) ? 
+              "<button class=\"add_friend request-has-been-sent\" name=\"$id\">Заявка отправлена</button>" : 
+              "<button class=\"add_friend \" name=\"$id\">Добавить в друзья</button>"
+              ?>
 
               <button class="following" name="<?php echo $id ?>"><?php echo find_sub() ? 'Вы подписаны' : 'Подписаться' ?></button>
-
+            
             </form>
           </div>
     <?php
